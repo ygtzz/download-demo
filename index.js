@@ -25,6 +25,13 @@ router.get('/', async function (ctx) {
     await send(ctx, fileName, { root: __dirname + '/public' });
 });
 
+router.get('/inline', async function (ctx) {
+    var fileName = '方案.pdf';
+    // 设置实体头（表示消息体的附加信息的头字段）,提示浏览器以文件下载的方式打开
+    ctx.set("Content-disposition", "inline");
+    await send(ctx, fileName, { root: __dirname + '/public' });
+});
+
 router.get('/download', async function (ctx) {
     var fileName = '方案.pdf';
     // 设置实体头（表示消息体的附加信息的头字段）,提示浏览器以文件下载的方式打开
@@ -34,7 +41,15 @@ router.get('/download', async function (ctx) {
     await send(ctx, fileName, { root: __dirname + '/public' });
 });
 
-router.get('/inline', async function (ctx) {
+//流下载
+router.get('/downstream', async function (ctx) {
+    var fileName = '方案.pdf';
+    // 设置实体头（表示消息体的附加信息的头字段）,提示浏览器以文件下载的方式打开
+    ctx.set("Content-disposition", "attachment; filename=" + urlencode(fileName));
+    ctx.body = fs.createReadStream('./public/' + fileName);
+});
+
+router.get('/zip', async function (ctx) {
     var fileName = '方案.pdf';
     // 设置实体头（表示消息体的附加信息的头字段）,提示浏览器以文件下载的方式打开
     ctx.set("Content-disposition", "inline");
