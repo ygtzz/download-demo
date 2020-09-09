@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ygtzz/download-demo#readme",
   "dependencies": {
+    "archiver": "^5.0.0",
     "axios": "^0.20.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",

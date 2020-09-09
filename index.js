@@ -12,6 +12,7 @@ const path = require('path');
 const fs = require('fs');
 const stream = require('stream');
 const static = require('koa-static');
+const archiver = require('archiver');
 
 // 配置静态web服务的中间件
 app.use(static(
@@ -49,12 +50,28 @@ router.get('/downstream', async function (ctx) {
     ctx.body = fs.createReadStream('./public/' + fileName);
 });
 
-router.get('/zip', async function (ctx) {
-    var fileName = '方案.pdf';
-    // 设置实体头（表示消息体的附加信息的头字段）,提示浏览器以文件下载的方式打开
-    ctx.set("Content-disposition", "inline");
-    await send(ctx, fileName, { root: __dirname + '/public' });
-});
+router.get('/zip', async function (ctx){
+    // 将要打包的文件列表
+    const list = [{name: '方案1.pdf',path:'./public/方案.pdf'},{name: '方案2.pdf',path:'./static/public/跨域测试文件.pdf'}];
+    const zipName = '1.zip';
+    const zipStream = fs.createWriteStream(zipName);
+    const zip = archiver('zip');
+    zip.pipe(zipStream);
+    for (let i = 0; i < list.length; i++) {
+        // 添加单个文件到压缩包
+        zip.append(fs.createReadStream(list[i].path), { name: list[i].name })
+    }
+    await zip.finalize();
+    ctx.attachment(zipName);
+    await send(ctx, zipName);
+
+    // const zipStream = fs.createWriteStream('1.zip');
+    // const zip = archiver('zip');
+    // zip.pipe(zipStream);
+    // // 添加整个文件夹到压缩包
+    // zip.directory('upload/');
+    // zip.finalize();
+})
 
 router.post('/proxy', async function (ctx) {
     let postParam = ctx.request.body //获取post提交的数据
