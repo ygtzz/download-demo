@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>download demo</title>
+</head>
+<body>
+    <h1>download demo</h1>
+    <button onclick="onDownload()">下载文件</button>
+    <script>
+        function onDownload(){
+            postForm('http://localhost:3000/proxy',{
+                fileName: encodeURIComponent('跨域测试文件.pdf'),
+                filePath: encodeURIComponent('http://localhost:3000/public/方案.pdf')
+            });
+        }
+
+        function postForm(url, params) {
+            var temp = document.createElement("form"); //创建form表单
+            temp.action = url;
+            temp.target = "_blank";
+            temp.method = "post";
+            temp.style.display = "none";//表单样式为隐藏
+            for (var item in params) {//初始化表单内部的控件
+            //根据实际情况创建不同的标签元素
+                var opt =document.createElement("input");  //添加input标签
+                opt.type="text";   //类型为text
+                opt.id = item;      //设置id属性
+                opt.name = item;    //设置name属性
+                opt.value = params[item];   //设置value属性
+                temp.appendChild(opt);
+            }
+
+            document.body.appendChild(temp);
+            temp.submit();
+            temp.parentNode.removeChild(temp);
+            return temp;
+        }
+    </script>
+</body>
+</html>
